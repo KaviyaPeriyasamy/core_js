@@ -19,11 +19,22 @@ def get_retailers():
 				"customer_name": cust_doc.customer_name,
 				"customer_group": cust_doc.customer_group,
 				"customer_type": "Retailer",                                                                                                                                                     
-				"Beat": cust_doc.beat,                                     
+				"area": cust_doc.beat,                                     
 				"gstin": cust_doc.gstin,
 				"pan": cust_doc.pan,
 				"gst_category": cust_doc.gst_category,
-				"dob": cust_doc.posa_birthday
+				"dob": cust_doc.posa_birthday,
+				"country": None,
+				"state": None,
+				"city": None,
+				"pincode": None,
+				"address1": None,
+				"address2": None,
+				"fax": None,
+				"email_id": None,
+				"mobile_no": None,
+				"company": None,
+				"credit_limit": None
 				}
 			if addr:
 				addr_doc = frappe.get_doc('Address', addr)
@@ -64,11 +75,22 @@ def get_distributors():
 				"customer_name": cust_doc.customer_name,
 				"customer_group": cust_doc.customer_group,
 				"customer_type": "Distributor",                                                                                                                                                     
-				"Beat": cust_doc.beat,                                     
+				"area": cust_doc.beat,                                     
 				"gstin": cust_doc.gstin,
 				"pan": cust_doc.pan,
 				"gst_category": cust_doc.gst_category,
-				"dob": cust_doc.posa_birthday
+				"dob": cust_doc.posa_birthday,
+				"country": None,
+				"state": None,
+				"city": None,
+				"pincode": None,
+				"address1": None,
+				"address2": None,
+				"fax": None,
+				"email_id": None,
+				"mobile_no": None,
+				"company": None,
+				"credit_limit": None
 				}
 			if addr:
 				addr_doc = frappe.get_doc('Address', addr)
