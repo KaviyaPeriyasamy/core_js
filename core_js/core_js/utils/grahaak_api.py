@@ -120,8 +120,7 @@ def get_item_groups():
 	
 	fields = ['name','creation','modified',
 	'item_group_name','parent_item_group',
-	'name as SyncId','IFNULL("Item Group", "Item Group") as doctype',
-	'IFNULL("0", "0") as disabled']
+	'name as SyncId']
 
 	number_fields = ['disabled']
 
@@ -131,7 +130,8 @@ def get_item_groups():
 		for fld in number_fields:
 			if fld in itm:
 				itm[fld] = int(itm[fld])
+		itm['disabled'] = 0
+		itm['doctype'] = 'Item Group'
 
 	return item_groups
-
 
