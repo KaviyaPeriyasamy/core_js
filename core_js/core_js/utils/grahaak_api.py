@@ -110,3 +110,28 @@ def get_distributors():
 				data_set['credit_limit'] = limit.credit_limit
 			data.append(data_set)
 	return data
+
+
+
+
+
+@frappe.whitelist()
+def get_item_groups():
+	
+	fields = ['name','creation','modified',
+	'item_group_name','parent_item_group',
+	'name as SyncId','IFNULL("Item Group", "Item Group") as doctype',
+	'IFNULL("0", "0") as disabled']
+
+	number_fields = ['disabled']
+
+	item_groups = frappe.db.get_values("Item Group",{},fields,as_dict=True)
+
+	for itm in item_groups:
+		for fld in number_fields:
+			if fld in itm:
+				itm[fld] = int(itm[fld])
+
+	return item_groups
+
+
