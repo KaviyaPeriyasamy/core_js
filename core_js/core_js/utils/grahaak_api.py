@@ -188,14 +188,14 @@ def get_items():
 	
 	fields = ['name','creation','modified',
 	'item_code','item_name','item_group','gst_hsn_code',
-	'disabled','description','IFNULL("Item", "Item") as doctype','stock_uom as base_unit']
+	'disabled','description','stock_uom as base_unit']
 
 	number_fields = ['disabled']
 
 	items = frappe.db.get_values("Item",{},fields,as_dict=True)
 
 	for itm in items:
-		
+		itm['doctype'] = 'Item'
 		item_group = itm.get('item_group','')
 		item_segment = frappe.db.get_value('Item Group',{'name':item_group},'parent_item_group')
 		itm['item_segment'] = item_segment
