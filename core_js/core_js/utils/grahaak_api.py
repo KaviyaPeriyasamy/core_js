@@ -135,3 +135,88 @@ def get_item_groups():
 
 	return item_groups
 
+
+
+
+def update_prices(item_doc,itm):
+	mrp = frappe.db.get_value("Item Price",{'item_code':item_doc.item_code,
+												'price_list':'MRP'},'price_list_rate')
+	itm['mrp'] = mrp or 0
+
+	distributors = frappe.db.get_all('Customer Group',{'parent_customer_group':'Distributors'})
+	distributors = [d.get('name') for d in distributors]
+	price_lists = frappe.get_all('Item Price',{'item_code':item_doc.item_code},['price_list','price_list_rate'],order_by='modified')
+	dp = 0
+	rp = 0
+	for price_list in price_lists:
+		if price_list.get('price_list') in distributors:
+			dp = price_list.get('price_list_rate')
+			break
+		rp = price_list.get('price_list_rate')
+
+	itm['dp'] = dp
+	itm['rp'] = rp
+
+
+def update_taxes(item_doc,itm):
+	item_taxes = item_doc.taxes
+	igst = 0
+	cgst = 0
+	sgst = 0
+	gst = 0
+
+	for row in item_taxes:
+		item_tax_template = row.item_tax_template
+		gst = int(''.join(filter(str.isdigit, item_tax_template))) or 0
+		item_tax_template_doc = frappe.get_doc('Item Tax Template',item_tax_template)
+		for tax_row in item_tax_template_doc.taxes:
+			tax_type = tax_row.tax_type
+			if tax_type.lower().startswith('output'):
+				if 'igst' in tax_type.lower():
+					igst = tax_row.tax_rate
+				if 'cgst' in tax_type.lower():
+					cgst = tax_row.tax_rate
+				if 'sgst' in tax_type.lower():
+					sgst = tax_row.tax_rate
+
+	itm.update({'gst':gst,'igst':igst,'cgst':cgst,'sgst':sgst})
+
+
+
+@frappe.whitelist()
+def get_items():
+	
+	fields = ['name','creation','modified',
+	'item_code','item_name','item_group','gst_hsn_code',
+	'disabled','description','IFNULL("Item", "Item") as doctype','stock_uom as base_unit']
+
+	number_fields = ['disabled']
+
+	items = frappe.db.get_values("Item",{},fields,as_dict=True)
+
+	for itm in items:
+		
+		item_group = itm.get('item_group','')
+		item_segment = frappe.db.get_value('Item Group',{'name':item_group},'parent_item_group')
+		itm['item_segment'] = item_segment
+
+		item_doc = frappe.get_doc('Item',itm.get('name'))
+		uoms = item_doc.uoms
+		uom_keys = ['primary_unit','secondary_unit']
+		for idx,uom_key in enumerate(uom_keys):
+			if idx < len(uoms) -1:
+				itm[uom_key] = uoms[idx].uom
+			else:
+				itm[uom_key] = None
+
+		for fld in number_fields:
+			if fld in itm:
+				itm[fld] = int(itm[fld])
+
+
+		
+		update_taxes(item_doc,itm)
+		update_prices(item_doc,itm)
+
+
+	return items
