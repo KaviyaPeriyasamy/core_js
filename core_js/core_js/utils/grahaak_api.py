@@ -52,6 +52,24 @@ def get_retailers():
 			for limit in cust_doc.credit_limits:
 				data_set['company'] = limit.company
 				data_set['credit_limit'] = limit.credit_limit
+			if cust_doc.beat:
+				territory_type = frappe.db.get_value('Territory', cust_doc.beat, 'territory_type')
+				if territory_type == "Area":
+					city = frappe.db.get_value('Territory', cust_doc.beat, 'parent_territory')
+					if city:
+						city_territory_type = frappe.db.get_value('Territory', city, 'territory_type')
+						if city_territory_type == "City":
+							data_set['city'] = city
+							state = frappe.db.get_value('Territory', city, 'parent_territory')
+							if state:
+								state_territory_type = frappe.db.get_value('Territory', state, 'territory_type')
+								if state_territory_type == "State":
+									data_set['state'] = state
+									country = frappe.db.get_value('Territory', state, 'parent_territory')
+									if country:
+										country_territory_type = frappe.db.get_value('Territory', country, 'territory_type')
+										if country_territory_type == "Country":
+											data_set['country'] = country
 			data.append(data_set)
 	return data
 
@@ -108,6 +126,24 @@ def get_distributors():
 			for limit in cust_doc.credit_limits:
 				data_set['company'] = limit.company
 				data_set['credit_limit'] = limit.credit_limit
+			if cust_doc.beat:
+				territory_type = frappe.db.get_value('Territory', cust_doc.beat, 'territory_type')
+				if territory_type == "Area":
+					city = frappe.db.get_value('Territory', cust_doc.beat, 'parent_territory')
+					if city:
+						city_territory_type = frappe.db.get_value('Territory', city, 'territory_type')
+						if city_territory_type == "City":
+							data_set['city'] = city
+							state = frappe.db.get_value('Territory', city, 'parent_territory')
+							if state:
+								state_territory_type = frappe.db.get_value('Territory', state, 'territory_type')
+								if state_territory_type == "State":
+									data_set['state'] = state
+									country = frappe.db.get_value('Territory', state, 'parent_territory')
+									if country:
+										country_territory_type = frappe.db.get_value('Territory', country, 'territory_type')
+										if country_territory_type == "Country":
+											data_set['country'] = country
 			data.append(data_set)
 	return data
 
@@ -220,3 +256,39 @@ def get_items():
 
 
 	return items
+
+@frappe.whitelist()
+def get_distributorwise_item_price():
+	final_list = []
+	distributor_list = frappe.get_list("Customer Group", 
+						{
+							"parent_customer_group": "Distributors"
+						})
+	for distributor in distributor_list:	
+		distributor_name_list = frappe.get_list("Customer", {"customer_group": distributor['name']})
+
+		for distributor_name in distributor_name_list:
+			item_price_list = frappe.get_list("Item Price", {
+			"price_list": distributor['name'],
+			"selling": 1
+			})
+			for item_price in item_price_list:
+				item_price_doc = frappe.get_doc("Item Price", item_price['name'])
+				mrp = frappe.db.get_value("Item Price", 
+				{'item_code':item_price_doc.item_code,
+				"price_list": "MRP",
+				"selling": 1}, "price_list_rate")
+				final_list.append(
+					{
+					"sync_id": item_price_doc.name,
+					"creation": item_price_doc.creation,
+					"modified": item_price_doc.modified,
+					"distributor_name": distributor_name['name'],
+					"customer_group": distributor['name'],       
+					"item_name": item_price_doc.item_name,
+					"mrp": mrp if mrp else 0.0,
+					"dp": item_price_doc.price_list_rate,
+					"rp": 0.0
+				}
+				)
+	return final_list
