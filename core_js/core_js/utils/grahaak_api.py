@@ -291,4 +291,4 @@ def get_distributorwise_item_price():
 					"rp": 0.0
 				}
 				)
-	return final_list
+	return list(set(final_list))
