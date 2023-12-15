@@ -63,8 +63,8 @@ doctype_js = {"Opportunity" : "public/js/opportunity.js"}
 
 jinja = {
     "methods" : [
-      "justsign.justsign.utils.sales_order_print.get_invoice_item_and_tax_details",
-      "justsign.justsign.utils.sales_invoice_print.get_inv_item_and_tax_details",
+      "core_js.core_js.utils.sales_order_print.get_invoice_item_and_tax_details",
+      "core_js.core_js.utils.sales_invoice_print.get_inv_item_and_tax_details",
       "frappe.utils.data.money_in_words"
     ]
 }
@@ -124,7 +124,7 @@ jinja = {
 
 scheduler_events = {
     "cron":{
-		'00 11 * * *':"justsign.justsign.utils.shift_type.thirvusoft_process_auto_attendance_shift",
+		'00 11 * * *':"core_js.core_js.utils.shift_type.thirvusoft_process_auto_attendance_shift",
 	}
 #	"all": [
 #		"core_js.tasks.all"
