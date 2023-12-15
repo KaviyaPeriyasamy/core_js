@@ -30,6 +30,7 @@ app_license = "MIT"
 
 # include js in doctype views
 # doctype_js = {"doctype" : "public/js/doctype.js"}
+doctype_js = {"Opportunity" : "public/js/opportunity.js"}
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
@@ -59,6 +60,14 @@ app_license = "MIT"
 #	"methods": "core_js.utils.jinja_methods",
 #	"filters": "core_js.utils.jinja_filters"
 # }
+
+jinja = {
+    "methods" : [
+      "justsign.justsign.utils.sales_order_print.get_invoice_item_and_tax_details",
+      "justsign.justsign.utils.sales_invoice_print.get_inv_item_and_tax_details",
+      "frappe.utils.data.money_in_words"
+    ]
+}
 
 # Installation
 # ------------
@@ -113,7 +122,10 @@ app_license = "MIT"
 # Scheduled Tasks
 # ---------------
 
-# scheduler_events = {
+scheduler_events = {
+    "cron":{
+		'00 11 * * *':"justsign.justsign.utils.shift_type.thirvusoft_process_auto_attendance_shift",
+	}
 #	"all": [
 #		"core_js.tasks.all"
 #	],
@@ -129,7 +141,7 @@ app_license = "MIT"
 #	"monthly": [
 #		"core_js.tasks.monthly"
 #	],
-# }
+}
 
 # Testing
 # -------

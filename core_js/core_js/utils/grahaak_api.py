@@ -292,3 +292,58 @@ def get_distributorwise_item_price():
 				}
 				)
 	return list(set(final_list))
+
+@frappe.whitelist()
+def get_sales_invoice(customer = None, from_date = None, to_date = None):
+
+	custom_filter = {
+		"docstatus": 1
+	}
+
+	if customer:
+		custom_filter["customer"] = customer
+
+	if from_date and to_date:
+		custom_filter["posting_date"] = ["between", [from_date, to_date]]
+
+	elif from_date:
+		custom_filter["posting_date"] = from_date
+
+	elif to_date:
+		custom_filter["posting_date"] = to_date
+
+	main_fields = [
+		'name','creation','modified','posting_date as posting_Date','customer as customer_Syncid','customer_name',
+		'customer_group', 'remarks', 'name as Invoice_id', 'total_qty as Total_Qty',
+		'additional_discount_percentage as Discount_Percentage', 'discount_amount as Discount_Amount',
+		'total_taxes_and_charges as Tax_Amount', 'rounding_adjustment as RoundOff', 'rounded_total as Bill_Amount',
+		'net_total as Net_Total', 'status'
+	]
+
+	sub_fields = [
+		'name', 'creation', 'modified', 'idx as Sr_no', 'item_code', 'item_name', 'qty', 'uom as unit', 'price_list_rate',
+		'discount_percentage', 'discount_amount', 'rate', 'amount as Amount', 'amount as Bill_amount',
+		'net_amount as Net_amount', 'parent'
+	]
+
+	invoice_list = frappe.db.get_values("Sales Invoice",
+		custom_filter,
+		main_fields,
+		as_dict = True
+	)
+
+	for invoice in invoice_list:
+
+		invoice["itemWiseDetail"] = frappe.db.get_values("Sales Invoice Item",
+			{
+				"parent": invoice["name"],
+			},
+			sub_fields,
+			as_dict = True
+		)
+
+	frappe.local.response["data"] = invoice_list
+
+# @frappe.whitelist()
+# def get_distributor_ledger(customer = None, from_date = None, to_date = None):
+
