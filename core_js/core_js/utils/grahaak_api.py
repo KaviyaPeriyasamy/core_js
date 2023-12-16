@@ -1,4 +1,5 @@
 import frappe
+import json
 
 @frappe.whitelist()
 def get_retailers():
@@ -314,7 +315,7 @@ def get_sales_invoice(customer = None, from_date = None, to_date = None):
 
 	main_fields = [
 		'name','creation','modified','posting_date as posting_Date','customer as customer_Syncid','customer_name',
-		'customer_group', 'remarks', 'name as Invoice_id', 'total_qty as Total_Qty',
+		'customer_group', 'remarks', 'name as Invoice_id', 'total_qty as Total_Qty', 'net_total as Gross_Amount',
 		'additional_discount_percentage as Discount_Percentage', 'discount_amount as Discount_Amount',
 		'total_taxes_and_charges as Tax_Amount', 'rounding_adjustment as RoundOff', 'rounded_total as Bill_Amount',
 		'net_total as Net_Total', 'status'
@@ -322,7 +323,7 @@ def get_sales_invoice(customer = None, from_date = None, to_date = None):
 
 	sub_fields = [
 		'name', 'creation', 'modified', 'idx as Sr_no', 'item_code', 'item_name', 'qty', 'uom as unit', 'price_list_rate',
-		'discount_percentage', 'discount_amount', 'rate', 'amount as Amount', 'amount as Bill_amount',
+		'discount_percentage', 'discount_amount', 'rate', 'rate as Mrp', 'amount as Amount', 'amount as Bill_amount',
 		'net_amount as Net_amount', 'parent'
 	]
 
@@ -342,8 +343,101 @@ def get_sales_invoice(customer = None, from_date = None, to_date = None):
 			as_dict = True
 		)
 
+		tax_table_details = frappe.db.get_values("Sales Taxes and Charges",
+			{
+				"parent": invoice["name"],
+				"parenttype": "Sales Invoice"
+			},
+			[
+				'item_wise_tax_detail',
+				'account_head'
+			],
+			as_dict = True
+		)
+
+		sgst_item_wise_tax_detail = {}
+		cgst_item_wise_tax_detail = {}
+		igst_item_wise_tax_detail = {}
+
+		for tax_table_detail in tax_table_details:
+
+			if "SGST" in tax_table_detail.account_head:
+				sgst_item_wise_tax_detail = json.loads(tax_table_detail.item_wise_tax_detail)
+
+			if "CGST" in tax_table_detail.account_head:
+				cgst_item_wise_tax_detail = json.loads(tax_table_detail.item_wise_tax_detail)
+
+			if "IGST" in tax_table_detail.account_head:
+				igst_item_wise_tax_detail = json.loads(tax_table_detail.item_wise_tax_detail)
+
+		for item in invoice["itemWiseDetail"]:
+
+			item['tax_Percentage'] = 0
+			item['tax_Amount'] = 0
+
+			item['Igst_Amount'] = 0
+			item['Sgst_Amount'] = 0
+			item['Cgst_Amount'] = 0
+
+			if igst_item_wise_tax_detail:
+
+				item['Igst_Amount'] = round(igst_item_wise_tax_detail[item["item_code"]][1], 2)
+				item['tax_Percentage'] += igst_item_wise_tax_detail[item["item_code"]][0]
+				item['tax_Amount'] += item['Igst_Amount']
+
+			if sgst_item_wise_tax_detail:
+				item['Sgst_Amount'] = round(sgst_item_wise_tax_detail[item["item_code"]][1], 2)
+				item['tax_Percentage'] += sgst_item_wise_tax_detail[item["item_code"]][0]
+				item['tax_Amount'] += item['Sgst_Amount']
+			
+			if cgst_item_wise_tax_detail:
+				item['Cgst_Amount'] = round(cgst_item_wise_tax_detail[item["item_code"]][1], 2)
+				item['tax_Percentage'] += cgst_item_wise_tax_detail[item["item_code"]][0]
+				item['tax_Amount'] += item['Cgst_Amount']
+
 	frappe.local.response["data"] = invoice_list
 
-# @frappe.whitelist()
-# def get_distributor_ledger(customer = None, from_date = None, to_date = None):
+@frappe.whitelist()
+def get_distributor_ledger(customer = None, from_date = None, to_date = None):
 
+	fields = [
+		'name', 'creation', 'modified', 'posting_date', 'party', 'debit', 'credit', 'voucher_type', 'voucher_no',
+		'remarks', 'is_opening', 'fiscal_year'
+	]
+
+	custom_filter = {
+		"is_cancelled": 0,
+		"party_type": "Customer"
+	}
+
+	if customer:
+		custom_filter["party"] = customer
+
+	if from_date and to_date:
+		custom_filter["posting_date"] = ["between", [from_date, to_date]]
+
+	elif from_date:
+		custom_filter["posting_date"] = from_date
+
+	elif to_date:
+		custom_filter["posting_date"] = to_date
+
+	gl_list = frappe.db.get_values("GL Entry",
+		custom_filter,
+		fields,
+		as_dict = True
+	)
+
+	for gl in gl_list:
+
+		gl["party_group"] = frappe.get_value("Customer", gl["party"], "customer_group")
+
+		gl["doctype"] = "GL Entry"
+
+		if gl["debit"] > 0:
+			gl["Amount"] = gl["debit"]
+
+		elif gl["credit"] > 0:
+			gl["Amount"] = gl["credit"] * -1
+
+	frappe.local.response["data"] = gl_list
