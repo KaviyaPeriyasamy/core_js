@@ -272,27 +272,37 @@ def get_distributorwise_item_price():
 			item_price_list = frappe.get_list("Item Price", {
 			"price_list": distributor['name'],
 			"selling": 1
-			})
+			},
+			order_by = "modified desc")
 			for item_price in item_price_list:
 				item_price_doc = frappe.get_doc("Item Price", item_price['name'])
-				mrp = frappe.db.get_value("Item Price", 
-				{'item_code':item_price_doc.item_code,
-				"price_list": "MRP",
-				"selling": 1}, "price_list_rate")
-				final_list.append(
-					{
-					"sync_id": item_price_doc.name,
-					"creation": item_price_doc.creation,
-					"modified": item_price_doc.modified,
-					"distributor_name": distributor_name['name'],
-					"customer_group": distributor['name'],       
-					"item_name": item_price_doc.item_name,
-					"mrp": mrp if mrp else 0.0,
-					"dp": item_price_doc.price_list_rate,
-					"rp": 0.0
-				}
-				)
-	return list(set(final_list))
+
+				final_matched = False
+
+				for final in final_list:
+					if final["distributor_name"] == distributor_name['name'] and final["customer_group"] == distributor['name'] and final["item_name"] == item_price_doc.item_name:
+
+						final_matched = True
+
+				if not final_matched:
+					mrp = frappe.db.get_value("Item Price", 
+					{'item_code':item_price_doc.item_code,
+					"price_list": "MRP",
+					"selling": 1}, "price_list_rate", order_by="modified")
+					final_list.append(
+						{
+						"sync_id": item_price_doc.name,
+						"creation": item_price_doc.creation,
+						"modified": item_price_doc.modified,
+						"distributor_name": distributor_name['name'],
+						"customer_group": distributor['name'],       
+						"item_name": item_price_doc.item_name,
+						"mrp": mrp if mrp else 0.0,
+						"dp": item_price_doc.price_list_rate,
+						"rp": 0.0
+					}
+					)
+	return final_list
 
 @frappe.whitelist()
 def get_sales_invoice(customer = None, from_date = None, to_date = None):
