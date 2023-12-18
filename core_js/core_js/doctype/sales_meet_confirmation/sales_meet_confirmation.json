@@ -1,0 +1,118 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "Field_Meet-.######.",
+ "creation": "2023-08-07 21:11:46.460316",
+ "default_view": "List",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "creator",
+  "customer",
+  "customer_location",
+  "logged_geo_location",
+  "distance",
+  "check_in_time",
+  "check_out_time",
+  "duration",
+  "rate_meeting"
+ ],
+ "fields": [
+  {
+   "bold": 1,
+   "fieldname": "creator",
+   "fieldtype": "Link",
+   "in_filter": 1,
+   "in_list_view": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Sales Representative",
+   "options": "User",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Customer",
+   "options": "Customer",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "customer.customer_geolocation",
+   "fieldname": "customer_location",
+   "fieldtype": "Data",
+   "label": "Customer Location",
+   "read_only": 1
+  },
+  {
+   "fieldname": "logged_geo_location",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Logged Geo Location",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "distance",
+   "fieldtype": "Data",
+   "label": "Distance from Customer in Kilometers",
+   "read_only": 1
+  },
+  {
+   "fieldname": "check_in_time",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Check In Time",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "check_out_time",
+   "fieldtype": "Data",
+   "label": "Check Out Time",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "duration",
+   "fieldtype": "Data",
+   "label": "Duration",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "rate_meeting",
+   "fieldtype": "Rating",
+   "label": " Rate Meeting",
+   "reqd": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2023-12-18 23:43:06.108568",
+ "modified_by": "Administrator",
+ "module": "Core Js",
+ "name": "sales_meet_confirmation",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
