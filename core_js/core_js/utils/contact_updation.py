@@ -1,3 +1,4 @@
+from erpnext.crm.doctype.lead.lead import Lead
 import frappe
 from frappe.utils import comma_and,	get_link_to_form
 # core_js.core_js.utils.contact_updation.row_duplication_delete
@@ -154,26 +155,137 @@ from frappe.utils import comma_and,	get_link_to_form
 #             frappe.db.commit()
 
 def validate(self, event):
+    if frappe.flags.ignore_validate:
+        return
+
+    not_duplicate_matched = False
+
+    phone_nos = []
     for phone in self.phone_nos:
 
-        duplicate_number = frappe.db.get_all("Contact Phone", {"phone": phone.phone}, ["parent"], pluck = "parent")
+        duplicate_number = frappe.db.get_all("Contact Phone", {"phone": phone.phone, "parent": ["!=", self.name]}, ["parent"], pluck = "parent")
+
         
         if duplicate_number:
 
             if frappe.db.exists("Contact", duplicate_number[0]):
 
+                duplicate_doc = frappe.get_doc("Contact", duplicate_number[0])
+
+                if self.first_name:
+
+                    duplicate_doc.first_name = self.first_name
+
+                for link in self.links:
+
+                    duplicate_doc.append("links", {
+                        "link_name": link.link_name,
+                        "link_doctype": link.link_doctype
+                    })
+                
+                frappe.flags.ignore_validate = True
+                duplicate_doc.save()
+                frappe.flags.ignore_validate = False
+
                 link = get_link_to_form('Contact', duplicate_number[0])
 
-                frappe.msgprint(f'Already Phone Number Exists In - {format(comma_and(link))}', title='Warning',indicator="orange",raise_exception=1)
+                frappe.msgprint(f'Already <b>Phone Number: {phone.phone}</b> Exists, So Updated In - {format(comma_and(link))} Contact.', title = 'Message', indicator = "blue")
+        else:
+            phone=frappe.copy_doc(phone)
+            phone.idx = len(phone_nos) + 1
+            phone_nos.append(phone)
+            not_duplicate_matched = True
 
+    email_ids = []
     for email in self.email_ids:
-        duplicate_email = frappe.db.get_all("Contact Email", {"email_id": email.email_id}, ["parent"], pluck = "parent")
+
+        duplicate_email = frappe.db.get_all("Contact Email", {"email_id": email.email_id, "parent": ["!=", self.name]}, ["parent"], pluck = "parent")
         
         if duplicate_email:
 
             if frappe.db.exists("Contact", duplicate_email[0]):
 
+                duplicate_doc = frappe.get_doc("Contact", duplicate_email[0])
+
+                if self.first_name:
+
+                    duplicate_doc.first_name = self.first_name
+
+                for link in self.links:
+
+                    duplicate_doc.append("links", {
+                        "link_name": link.link_name,
+                        "link_doctype": link.link_doctype
+                    })
+
+                frappe.flags.ignore_validate = True
+                duplicate_doc.save()
+                frappe.flags.ignore_validate = False
+
                 link = get_link_to_form('Contact', duplicate_email[0])
 
-                frappe.msgprint(f'Already Email Id Exists In - {format(comma_and(link))}', title='Warning',indicator="orange",raise_exception=1)
+                frappe.msgprint(f'Already <b>Email Id: {email.email_id}</b> Exists, So Updated In - {format(comma_and(link))} Contact.', title = 'Message', indicator = "blue")
+
+        else:
+            email = frappe.copy_doc(email)
+            email.idx = len(email_ids) + 1
+            email_ids.append(email)
+            not_duplicate_matched = True
+
+    self.update({
+        'phone_nos': phone_nos,
+        "email_ids": email_ids
+    })
+
+    if not not_duplicate_matched:
+        self.db_insert = lambda*a,**b: 1
+        self.db_update = lambda*a,**b: 1
+        self.run_method = lambda*a,**b: 1
+        self.run_post_save_methods = lambda*a,**b: 1
+        self.update_children = lambda*a,**b: 1
+
+class _Lead(Lead):
+    def before_insert(self):
+        pass
+
+    def after_insert(self):
+        self.contact_doc = None
+        if frappe.db.get_single_value("CRM Settings", "auto_creation_of_contact"):
+            self.contact_doc = self.create_contact()
+        
+    def create_contact(self):
+        if not self.lead_name:
+            self.set_full_name()
+            self.set_lead_name()
+
+        contact = frappe.new_doc("Contact")
+        contact.update(
+            {
+                "first_name": self.first_name or self.lead_name,
+                "last_name": self.last_name,
+                "salutation": self.salutation,
+                "gender": self.gender,
+                "job_title": self.job_title,
+                "company_name": self.company_name,
+            }
+        )
+
+        if self.email_id:
+            contact.append("email_ids", {"email_id": self.email_id, "is_primary": 1})
+
+        if self.phone:
+            contact.append("phone_nos", {"phone": self.phone, "is_primary_phone": 1})
+
+        if self.mobile_no:
+            contact.append("phone_nos", {"phone": self.mobile_no, "is_primary_mobile_no": 1})
+
+        contact.append(
+				"links", {"link_doctype": "Lead", "link_name": self.name, "link_title": self.lead_name}
+			)
+        
+        contact.insert(ignore_permissions=True)
+        contact.reload()  # load changes by hooks on contact
+
+        return contact
+    
 
