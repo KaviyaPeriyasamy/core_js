@@ -155,6 +155,7 @@ from frappe.utils import comma_and,	get_link_to_form
 #             frappe.db.commit()
 
 def validate(self, event):
+
     if frappe.flags.ignore_validate:
         return
 
@@ -238,6 +239,7 @@ def validate(self, event):
     })
 
     if not not_duplicate_matched:
+        self.name = None
         self.db_insert = lambda*a,**b: 1
         self.db_update = lambda*a,**b: 1
         self.run_method = lambda*a,**b: 1
@@ -270,22 +272,85 @@ class _Lead(Lead):
             }
         )
 
+        new_matched = False
+
         if self.email_id:
-            contact.append("email_ids", {"email_id": self.email_id, "is_primary": 1})
+
+            duplicate_email = frappe.db.get_all("Contact Email", {"email_id": self.email_id}, ["parent"], pluck = "parent")
+            
+            if not duplicate_email:
+
+                new_matched = True
+
+                contact.append("email_ids", {"email_id": self.email_id, "is_primary": 1})
+            
+            else:
+
+                duplicate_doc = frappe.get_doc("Contact", duplicate_email[0])
+
+                duplicate_doc.append("links", {
+                    "link_doctype": "Lead",
+                    "link_name": self.name,
+                    "link_title": self.lead_name
+                })
+
+                duplicate_doc.save()
 
         if self.phone:
-            contact.append("phone_nos", {"phone": self.phone, "is_primary_phone": 1})
+
+            duplicate_number = frappe.db.get_all("Contact Phone", {"phone": self.phone}, ["parent"], pluck = "parent")
+
+            if duplicate_number:
+
+                duplicate_doc = frappe.get_doc("Contact", duplicate_number[0])
+
+                duplicate_doc.append("links", {
+                    "link_doctype": "Lead",
+                    "link_name": self.name,
+                    "link_title": self.lead_name
+                })
+                
+                duplicate_doc.save()
+
+            else:
+
+                new_matched = True
+
+                contact.append("phone_nos", {"phone": self.phone, "is_primary_phone": 1})
 
         if self.mobile_no:
-            contact.append("phone_nos", {"phone": self.mobile_no, "is_primary_mobile_no": 1})
+
+            duplicate_number = frappe.db.get_all("Contact Phone", {"phone": self.mobile_no}, ["parent"], pluck = "parent")
+
+            if duplicate_number:
+
+                duplicate_doc = frappe.get_doc("Contact", duplicate_number[0])
+
+
+                duplicate_doc.append("links", {
+                    "link_doctype": "Lead",
+                    "link_name": self.name,
+                    "link_title": self.lead_name
+                })
+                
+                duplicate_doc.save()
+
+            else:
+
+                new_matched = True
+
+                contact.append("phone_nos", {"phone": self.mobile_no, "is_primary_mobile_no": 1})
 
         contact.append(
 				"links", {"link_doctype": "Lead", "link_name": self.name, "link_title": self.lead_name}
 			)
         
-        contact.insert(ignore_permissions=True)
-        contact.reload()  # load changes by hooks on contact
+        if new_matched:
 
-        return contact
+            contact.insert(ignore_permissions=True)
+            if frappe.db.exists(contact.doctype, contact.name):
+                contact.reload()  # load changes by hooks on contact
+
+            return contact
     
 
