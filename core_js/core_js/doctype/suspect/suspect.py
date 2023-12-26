@@ -7,7 +7,11 @@ from frappe.model.document import Document
 from frappe.model.mapper import get_mapped_doc
 
 class Suspect(Document):
-	pass
+	def on_update(self):
+
+		if self.status in ["Lead", "Junk"] and self.docstatus == 0:
+
+			self.submit()
 
 @frappe.whitelist()
 def create_lead(source_name, target_doc=None):

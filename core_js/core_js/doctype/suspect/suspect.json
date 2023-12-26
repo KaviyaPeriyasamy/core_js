@@ -12,6 +12,7 @@
  "engine": "InnoDB",
  "field_order": [
   "naming_series",
+  "series_copy",
   "salutation",
   "first_name",
   "middle_name",
@@ -191,7 +192,7 @@
   {
    "fieldname": "type",
    "fieldtype": "Select",
-   "label": "Lead Type",
+   "label": "Suspect Type",
    "oldfieldname": "type",
    "oldfieldtype": "Select",
    "options": "\nClient\nChannel Partner\nConsultant"
@@ -522,13 +523,23 @@
    "print_hide": 1,
    "read_only": 1,
    "search_index": 1
+  },
+  {
+   "fieldname": "series_copy",
+   "fieldtype": "Select",
+   "label": "Series Copy",
+   "no_copy": 1,
+   "oldfieldname": "naming_series",
+   "oldfieldtype": "Select",
+   "options": "CRM-SUSP-.YYYY.-",
+   "set_only_once": 1
   }
  ],
  "icon": "fa fa-user",
  "image_field": "image",
  "is_submittable": 1,
  "links": [],
- "modified": "2023-12-26 22:25:11.599944",
+ "modified": "2023-12-27 00:26:42.252512",
  "modified_by": "Administrator",
  "module": "Core Js",
  "name": "Suspect",
