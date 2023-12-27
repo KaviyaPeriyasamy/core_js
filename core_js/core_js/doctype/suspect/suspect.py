@@ -14,24 +14,23 @@ class Suspect(Document):
 			self.submit()
 
 @frappe.whitelist()
-def create_lead(source_name, target_doc=None):
-	# get_mapped_doc(
-	# 	from_doctype = "Suspect", 
-	# 	from_docname = doc_name,
-	# 	{
-	# 	"Payment Request": {
-	# 		"doctype": "Payment Order",
-	# 	}
-	# 	},
-	# 	target_doc = "Lead")
+def create_lead(doc):
+	frappe.errprint(doc)
+	doc = frappe.get_doc("Suspect", doc)
 
-	return get_mapped_doc(
-	"Suspect",
-	source_name,
-	{
-		"Suspect": {
-			"doctype": "Lead",
-		}
-	},
-	target_doc
-)
+
+
+	suspect_doc = frappe.copy_doc(doc)
+
+	suspect_doc.doctype = "Lead"
+	suspect_doc.custom_suspect_id = doc.name
+
+	lead_doc = frappe.new_doc("Lead")
+
+	lead_doc.update(suspect_doc.__dict__)
+
+	lead_doc.save()
+
+	frappe.set_value("Suspect", doc.name, "status", "Lead")
+
+	return lead_doc.name

@@ -8,17 +8,17 @@ frappe.ui.form.on("Suspect", {
             frm.add_custom_button(
                 __("Lead"),
                 function () {
-                    // erpnext.utils.map_current_doc({
-                    // 	method: "core_js.core_js.doctype.suspect.suspect.create_lead",
-                    // 	source_doctype: "Suspect",
-                    // 	target: frm,
-                    // })
-                    // frappe.call({
-                    //     method: "core_js.core_js.doctype.suspect.suspect.create_lead",
-                    //     args: {
-                    //         "doc_name": frm.doc.name
-                    //     }
-                    // })
+                    frappe.call({
+                        method: "core_js.core_js.doctype.suspect.suspect.create_lead",
+                        args: {
+                            "doc": frm.doc.name
+                        },
+                        callback: function(r){
+                            if (r.message){
+                               frappe.set_route('Form', 'Lead', r.message);
+                            }
+                        }
+                    })
                 },
                 __("Create")
             );
