@@ -4,7 +4,7 @@
 frappe.ui.form.on("Suspect", {
 	refresh(frm) {
 
-        if (!frm.doc.__islocal){
+        if (!frm.doc.__islocal && frm.doc.docstatus == 0){
             frm.add_custom_button(
                 __("Lead"),
                 function () {

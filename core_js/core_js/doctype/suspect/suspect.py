@@ -15,10 +15,8 @@ class Suspect(Document):
 
 @frappe.whitelist()
 def create_lead(doc):
-	frappe.errprint(doc)
+	
 	doc = frappe.get_doc("Suspect", doc)
-
-
 
 	suspect_doc = frappe.copy_doc(doc)
 
