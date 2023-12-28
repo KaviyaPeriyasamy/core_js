@@ -3,19 +3,22 @@
 
 frappe.ui.form.on("Suspect", {
 	refresh(frm) {
+        if(frm.doc.make_read_only){
+            frm.disable_form();
+        }
 
         if (!frm.doc.__islocal && frm.doc.docstatus == 0){
             frm.add_custom_button(
-                __("Lead"),
+                __("Prospect"),
                 function () {
                     frappe.call({
-                        method: "core_js.core_js.doctype.suspect.suspect.create_lead",
+                        method: "core_js.core_js.doctype.suspect.suspect.create_prospect",
                         args: {
                             "doc": frm.doc.name
                         },
                         callback: function(r){
                             if (r.message){
-                               frappe.set_route('Form', 'Lead', r.message);
+                               frappe.set_route('Form', 'Prospect', r.message);
                             }
                         }
                     })
@@ -26,8 +29,8 @@ frappe.ui.form.on("Suspect", {
 	},
 
     status(frm){
-        if (frm.doc.status == "Lead"){
-            frappe.show_alert({message: "Lead Status Cannot Set Mannualy.", indicator:'orange'});
+        if (frm.doc.status == "Prospect"){
+            frappe.show_alert({message: "Prospect Status Cannot Set Mannualy.", indicator: 'orange'});
             frm.set_value("status", "Open")
         }
     }

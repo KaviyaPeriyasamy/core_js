@@ -353,4 +353,37 @@ class _Lead(Lead):
 
             return contact
     
+# def deleting_unwanted_leads():
 
+#     lead_list = frappe.get_all("Lead", {"status": "Lead", "customer_group": ["!=", "End User"]}, pluck = "name")
+
+#     print(lead_list, len(lead_list))
+
+#     for lead in lead_list:
+
+#         print(lead)
+
+#         parent_name_list = frappe.get_all("Dynamic Link", {"link_doctype": "Lead", "link_name": lead}, ["parent", "parenttype", "name"])
+
+#         try:
+
+#             for parent_name in parent_name_list:
+
+#                 if parent_name:
+
+#                     if parent_name["parenttype"] in ["Address", "Contact", "Call Log"]:
+
+#                         doc = frappe.get_doc(parent_name["parenttype"], parent_name["parent"])
+
+#                         if len(doc.links) == 1 or parent_name["parenttype"] == "Call Log":
+#                             frappe.delete_doc(parent_name["parenttype"], parent_name["parent"])
+                        
+#                         else:
+#                             frappe.delete_doc("Dynamic Link", parent_name["name"])
+
+#             frappe.delete_doc("Lead", lead)
+#             frappe.db.commit()
+#         except:
+#             pass
+            
+#  bench --site erp.justsigns.co.in execute core_js.core_js.utils.contact_updation.deleting_unwanted_leads

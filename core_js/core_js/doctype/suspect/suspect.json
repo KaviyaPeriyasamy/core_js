@@ -24,6 +24,7 @@
   "col_break123",
   "lead_owner",
   "status",
+  "make_read_only",
   "customer",
   "type",
   "request_type",
@@ -174,7 +175,7 @@
    "no_copy": 1,
    "oldfieldname": "status",
    "oldfieldtype": "Select",
-   "options": "Open\nLead\nJunk",
+   "options": "Open\nProspect\nJunk",
    "reqd": 1,
    "search_index": 1
   },
@@ -523,13 +524,19 @@
    "print_hide": 1,
    "read_only": 1,
    "search_index": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "make_read_only",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "Make Read Only"
   }
  ],
  "icon": "fa fa-user",
  "image_field": "image",
- "is_submittable": 1,
  "links": [],
- "modified": "2023-12-27 09:13:11.246366",
+ "modified": "2023-12-28 23:24:29.730262",
  "modified_by": "Administrator",
  "module": "Core Js",
  "name": "Suspect",
@@ -540,7 +547,8 @@
    "permlevel": 1,
    "read": 1,
    "report": 1,
-   "role": "Desk User"
+   "role": "Desk User",
+   "write": 1
   },
   {
    "create": 1,
@@ -579,21 +587,24 @@
    "permlevel": 1,
    "read": 1,
    "report": 1,
-   "role": "Sales Manager"
+   "role": "Sales Manager",
+   "write": 1
   },
   {
    "permlevel": 1,
    "read": 1,
    "report": 1,
-   "role": "Sales User"
+   "role": "Sales User",
+   "write": 1
   }
  ],
  "search_fields": "lead_name,lead_owner,status",
  "sender_field": "email_id",
  "show_name_in_global_search": 1,
+ "show_title_field_in_link": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],
  "subject_field": "title",
- "title_field": "title"
+ "title_field": "first_name"
 }

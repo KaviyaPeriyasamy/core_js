@@ -5,8 +5,8 @@ frappe.listview_settings['Suspect'] = {
 			return [__("Junk"), "orange", "status,=,Junk"];
 		} 
         
-        else if (doc.status === "Lead") {
-			return [__("Lead"), "green", "status,=,Lead"];
+        else if (doc.status === "Prospect") {
+			return [__("Prospect"), "green", "status,=,Prospect"];
 		}
 
         else if (doc.status === "Open") {
