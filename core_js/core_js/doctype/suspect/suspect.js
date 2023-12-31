@@ -29,6 +29,16 @@ frappe.ui.form.on("Suspect", {
 	},
 
     status(frm){
+       
+        if(cur_frm.doc.status=="Prospect" || cur_frm.doc.status== "Junk")
+        {
+            
+        frm.remove_custom_button("Prospect","Create");
+        frm.remove_custom_button("Call");
+        frm.remove_custom_button("Next Follow-up");
+        }
+        
+    
         if (frm.doc.status == "Prospect"){
             frappe.show_alert({message: "Prospect Status Cannot Set Mannualy.", indicator: 'orange'});
             frm.set_value("status", "Open")

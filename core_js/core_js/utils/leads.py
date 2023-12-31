@@ -2,6 +2,11 @@ import frappe
 from frappe import _
 from frappe.desk.form import assign_to
 
+def validate(self,action):
+
+    if self.status =="Converted":
+        self.custom_make_read_only = 1
+
 
 @frappe.whitelist(allow_guest = True)
 def create_todo(ref_type, ref_name, assigned_to, status, priority, description, date):

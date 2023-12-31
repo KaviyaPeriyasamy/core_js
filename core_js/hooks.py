@@ -30,8 +30,11 @@ app_license = "MIT"
 
 # include js in doctype views
 # doctype_js = {"doctype" : "public/js/doctype.js"}
-doctype_js = {"Opportunity" : "public/js/opportunity.js"}
-# doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
+doctype_js = {"Opportunity" : "public/js/opportunity.js",
+              "Lead":"public/js/lead.js",
+              "Prospect":"public/js/prospect.js"}
+
+doctype_list_js = {"Prospect" : "public/js/prospect_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
 
@@ -114,7 +117,16 @@ override_doctype_class = {
 doc_events = {
 	"Contact": {
 		"validate": "core_js.core_js.utils.contact_updation.validate"
-	}
+	},
+    "Lead":{
+        "validate":"core_js.core_js.utils.leads.validate"
+    },
+    "Opportunity":{
+        "validate":"core_js.core_js.utils.opportunity.validate"
+    },
+    "Prospect":{
+        "validate":"core_js.core_js.utils.prospect.validate"
+    }
 }
 
 # Scheduled Tasks

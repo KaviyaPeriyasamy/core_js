@@ -1,3 +1,23 @@
+
+frappe.ui.form.on('Opportunity', {
+    refresh(frm) {
+        if(frm.doc.custom_make_read_only){
+            frm.disable_form();
+        }},
+    status: function(frm){
+    
+        if(cur_frm.doc.status=="Converted")
+        {
+            
+                frm.remove_custom_button("Supplier Quotation","Create");
+                frm.remove_custom_button("Request For Quotation","Create");
+                frm.remove_custom_button("Quotation","Create");
+                frm.remove_custom_button("Call");
+                frm.remove_custom_button("Close");
+                frm.remove_custom_button("Next Follow-up");
+        }
+	
+    },})
 frappe.ui.form.on('Opportunity Item', {
 
    item_code:function(frm,cdt,cdn){

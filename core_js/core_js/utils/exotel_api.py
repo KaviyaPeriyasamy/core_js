@@ -1,6 +1,6 @@
 import requests
 
-
+import frappe
 
 @frappe.whitelist()
 def click_to_call():
