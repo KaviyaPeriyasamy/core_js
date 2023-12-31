@@ -5,7 +5,7 @@ refresh(frm) {
         }},
     set_status_: function(frm){
     
-        if(cur_frm.doc.set_status_=="Converted")
+        if(cur_frm.doc.stek_status_=="Converted")
         {
                 frm.remove_custom_button("Customer","Create");
                 frm.remove_custom_button("Opportunity","Create");
