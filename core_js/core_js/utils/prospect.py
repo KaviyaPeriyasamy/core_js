@@ -1,7 +1,7 @@
 import frappe
 
 def validate(self,action):
-    if self.stek_status_ =="Converted":
+    if self.custom_status =="Converted":
         self.custom_make_read_only = 1
 
 
@@ -20,7 +20,7 @@ def prospect_creation_script():
                     prospect.company_name=customer_doc.customer_name
                     prospect.customer_group=customer_doc.customer_group
                     prospect.samples_sent="No"
-                    prospect.stek_status_="New"
+                    prospect.custom_status="New"
                     prospect.territory=customer_doc.territory
                     prospect.append(
                         "leads",
@@ -78,7 +78,7 @@ def prospect_creation_script():
                     prospect.company_name=customer_doc.customer_name
                     prospect.customer_group=customer_doc.customer_group
                     prospect.samples_sent="No"
-                    prospect.stek_status_="New"
+                    prospect.custom_status="New"
                     prospect.territory=customer_doc.territory
                     prospect.append(
                         "leads",
@@ -128,7 +128,7 @@ def prospect_creation_script():
                     prospect.company_name=customer_doc.customer_name
                     prospect.customer_group=customer_doc.customer_group
                     prospect.samples_sent="No"
-                    prospect.stek_status_="New"
+                    prospect.custom_status="New"
                     prospect.territory=customer_doc.territory
                     prospect.append(
                         "opportunities",
@@ -180,7 +180,7 @@ def prospect_creation_script():
                     prospect.company_name=customer_doc.customer_name
                     prospect.customer_group=customer_doc.customer_group
                     prospect.samples_sent="No"
-                    prospect.stek_status_="New"
+                    prospect.custom_status="New"
                     prospect.territory=customer_doc.territory
                     prospect.flags.ignore_permissions = True
                     prospect.flags.ignore_mandatory = True
@@ -298,7 +298,7 @@ def opportunity():
                     prospect.company_name=opp.party_name
 
                     prospect.samples_sent="No"
-                    prospect.stek_status_="New"
+                    prospect.custom_status="New"
                     prospect.territory=opp.territory
                     prospect.industry=opp.industry
 
@@ -331,7 +331,7 @@ def test():
                             prospect.company_name=opp.party_name
 
                             prospect.samples_sent="No"
-                            prospect.stek_status_="New"
+                            prospect.custom_status="New"
                             prospect.territory=opp.territory
                             prospect.industry=opp.industry
 

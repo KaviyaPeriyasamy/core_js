@@ -3,7 +3,19 @@
 
 frappe.ui.form.on("Suspect", {
 	refresh(frm) {
+        if(cur_frm.doc.status=="Prospect" || cur_frm.doc.status== "Junk")
+        {
+            
+        frm.remove_custom_button("Prospect","Create");
+        frm.remove_custom_button("Call");
+        frm.remove_custom_button("Next Follow-up");
+        }
         if(frm.doc.make_read_only){
+            setTimeout(()=>{
+        frm.remove_custom_button("Prospect","Create");
+        frm.remove_custom_button("Call");
+        frm.remove_custom_button("Next Follow-up");
+    },100)
             frm.disable_form();
         }
 
