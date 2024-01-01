@@ -20,6 +20,9 @@ frappe.listview_settings['Prospect'] = {
 		else if (doc.custom_status=="Sample Sent") {
 			return [__("Sample Sent"), "gray", "custom_status,=,Sample Sent"];
         }
+		else if (doc.custom_status=="Opportunity") {
+			return [__("Opportunity"), "pink", "custom_status,=,Opportunity"];
+        }
 		
 	},
 	
