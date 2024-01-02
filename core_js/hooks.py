@@ -125,7 +125,8 @@ doc_events = {
         "validate":"core_js.core_js.utils.opportunity.validate"
     },
     "Prospect":{
-        "validate":"core_js.core_js.utils.prospect.validate"
+        "validate":"core_js.core_js.utils.prospect.validate",
+        "on_trash": "core_js.core_js.utils.prospect.on_trash"
     }
 }
 

@@ -530,13 +530,14 @@
    "fieldname": "make_read_only",
    "fieldtype": "Check",
    "hidden": 1,
-   "label": "Make Read Only"
+   "label": "Make Read Only",
+   "no_copy": 1
   }
  ],
  "icon": "fa fa-user",
  "image_field": "image",
  "links": [],
- "modified": "2023-12-28 23:24:29.730262",
+ "modified": "2024-01-02 22:40:18.652065",
  "modified_by": "Administrator",
  "module": "Core Js",
  "name": "Suspect",
