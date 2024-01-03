@@ -23,7 +23,6 @@ def create_prospect(doc):
 
 	suspect_doc.doctype = "Prospect"
 	suspect_doc.custom_suspect_id = doc.name
-	suspect_doc.company_name = doc.company
 
 	lead_doc = frappe.new_doc("Prospect")
 

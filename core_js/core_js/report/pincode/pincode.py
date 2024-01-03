@@ -40,13 +40,22 @@ def get_columns():
 
 def get_data():
 	final_data = []
-	add=frappe.get_all("Address",fields=["name","state","pincode"])
+	filters1=[
+                    ["Dynamic Link", "link_doctype", "=", 'Customer'],
+                   
+                    ["Dynamic Link", "parenttype", "=", "Address"],
+                ]
+	add=frappe.get_all("Address",filters=filters1,fields=["name","state","pincode"])
 	for i in add:
 		add_doc=frappe.get_doc("Address",i.get("name"))
 		if add_doc.pincode:
-			if len(add_doc.pincode)<6 :
+			try:
+				add_doc.disabled=0
+				add_doc.save()
+			except Exception as e:
+				
 				final_data.append(i)
-	frappe.errprint(final_data)
+	
 	return final_data
 
 	
