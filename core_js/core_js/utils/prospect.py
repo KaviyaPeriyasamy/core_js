@@ -383,8 +383,10 @@ def test1():
             
 
 def on_trash(self, event):
-    frappe.set_value("Suspect", self.custom_suspect_id, "status", "Open")
-    frappe.set_value("Suspect", self.custom_suspect_id, "make_read_only", 0)
+
+    if self.custom_suspect_id:
+        frappe.set_value("Suspect", self.custom_suspect_id, "status", "Open")
+        frappe.set_value("Suspect", self.custom_suspect_id, "make_read_only", 0)
 
 
 

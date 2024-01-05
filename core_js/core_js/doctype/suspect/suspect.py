@@ -27,6 +27,12 @@ def create_prospect(doc):
 	lead_doc = frappe.new_doc("Prospect")
 
 	lead_doc.update(suspect_doc.__dict__)
+	if suspect_doc.first_name:
+		lead_doc.company_name = suspect_doc.first_name
+	if suspect_doc.company_name:
+		lead_doc.company_name = suspect_doc.company_name
+	if suspect_doc.lead_name:
+		lead_doc.company_name = suspect_doc.lead_name
 
 	lead_doc.flags.ignore_mandatory = True
 	lead_doc.save()

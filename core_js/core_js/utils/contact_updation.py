@@ -355,7 +355,7 @@ class _Lead(Lead):
     
 # def deleting_unwanted_leads():
 
-#     lead_list = frappe.get_all("Lead", {"status": "Lead", "customer_group": ["!=", "End User"]}, pluck = "name")
+#     lead_list = frappe.get_all("Lead", {"status": ["in", ["Interested", "Opportunity", "Prospect"]]}, pluck = "name")
 
 #     print(lead_list, len(lead_list))
 
@@ -387,3 +387,30 @@ class _Lead(Lead):
 #             pass
             
 #  bench --site erp.justsigns.co.in execute core_js.core_js.utils.contact_updation.deleting_unwanted_leads
+        
+# def duplicates_mobile(doc):
+#     existing_docs = frappe.get_all(
+#         doc.doctype,
+#         filters={
+#             'phone': doc.phone,
+#             'name': ['!=', doc.name],
+#         },
+#         fields=['name','modified'],
+#         order_by="modified desc"
+#     )
+
+#     if existing_docs:
+#         duplicate_names = [existing_doc["name"] for existing_doc in existing_docs]
+#         print(f'Duplicate documents found with names {", ".join(duplicate_names)}. Please check mobile numbers.')
+#         print(existing_docs)
+#         if existing_docs[0].modified > doc.modified:
+#             # frappe.delete_doc("Suspect", doc.name, ignore_permissions=True)
+#             print(existing_docs[0].modified , doc.modified,"to dele",doc.name)
+#         else:
+#             # frappe.delete_doc("Suspect", existing_docs[0].name, ignore_permissions=True)
+#             print(existing_docs[0].modified , doc.modified,"to dele",existing_docs[0].name)
+
+# def all_sus():
+#     d = frappe.get_all("Suspect",pluck="name")
+#     for i in d:
+#         duplicates_mobile(frappe.get_doc("Suspect",i))

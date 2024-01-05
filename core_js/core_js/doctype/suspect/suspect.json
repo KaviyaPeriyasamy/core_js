@@ -233,11 +233,14 @@
   {
    "fieldname": "mobile_no",
    "fieldtype": "Data",
+   "in_global_search": 1,
    "label": "Mobile No",
+   "no_copy": 1,
    "oldfieldname": "mobile_no",
    "oldfieldtype": "Data",
    "options": "Phone",
-   "reqd": 1
+   "reqd": 1,
+   "unique": 1
   },
   {
    "fieldname": "whatsapp_no",
@@ -537,7 +540,7 @@
  "icon": "fa fa-user",
  "image_field": "image",
  "links": [],
- "modified": "2024-01-02 22:40:18.652065",
+ "modified": "2024-01-04 11:07:05.167332",
  "modified_by": "Administrator",
  "module": "Core Js",
  "name": "Suspect",
