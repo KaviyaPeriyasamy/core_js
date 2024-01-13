@@ -255,6 +255,7 @@
   {
    "fieldname": "phone",
    "fieldtype": "Data",
+   "in_global_search": 1,
    "label": "Phone",
    "oldfieldname": "contact_no",
    "oldfieldtype": "Data",
@@ -540,7 +541,7 @@
  "icon": "fa fa-user",
  "image_field": "image",
  "links": [],
- "modified": "2024-01-04 11:07:05.167332",
+ "modified": "2024-01-05 20:17:36.965197",
  "modified_by": "Administrator",
  "module": "Core Js",
  "name": "Suspect",
