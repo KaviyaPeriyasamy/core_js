@@ -9,7 +9,7 @@ frappe.ui.form.on('Lead', {
                         "doc": frm.doc.name
                     },
                     callback: function(r){
-                        if (r.message){
+                        if (r.message){cur_frm.set_value("status","Prospect")
                            frappe.set_route('Form', 'Prospect', r.message);
                         }
                     }
@@ -37,6 +37,7 @@ frappe.ui.form.on('Lead', {
                 frm.remove_custom_button("Customer","Create");
                 frm.remove_custom_button("Opportunity","Create");
                 frm.remove_custom_button("Quotation","Create");
+                frm.remove_custom_button("Prospcet","Create");
                 frm.remove_custom_button("Call");
                 frm.remove_custom_button("Next Follow-up");
         }

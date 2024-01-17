@@ -28,8 +28,8 @@ def create_todo(ref_type, ref_name, assigned_to, status, priority, description, 
 
 @frappe.whitelist()
 def create_prospect(doc):
-	
 	doc = frappe.get_doc("Lead", doc)
+	
 	lead_doc = frappe.copy_doc(doc)
 	lead_doc.doctype = "Prospect"
 	prospcet_doc = frappe.new_doc("Prospect")
@@ -83,5 +83,5 @@ def create_prospect(doc):
 				
 			})
 			contact_doc.save(ignore_permissions=True)
-
+	frappe.set_value("Lead",doc.name,"status","Prospect")
 	return prospcet_doc.name
