@@ -4,8 +4,9 @@ from frappe.desk.form import assign_to
 
 def validate(self,action):
 
-	if self.status =="Converted":
+	if self.status =="Converted" or self.status == "Prospect":
 		self.custom_make_read_only = 1
+
 
 
 @frappe.whitelist(allow_guest = True)
@@ -84,4 +85,5 @@ def create_prospect(doc):
 			})
 			contact_doc.save(ignore_permissions=True)
 	frappe.set_value("Lead",doc.name,"status","Prospect")
+	frappe.set_value("Lead",doc.name,"custom_make_read_only",1)
 	return prospcet_doc.name
