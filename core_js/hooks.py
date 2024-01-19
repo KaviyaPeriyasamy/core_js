@@ -119,7 +119,8 @@ doc_events = {
 		"validate": "core_js.core_js.utils.contact_updation.validate"
 	},
     "Lead":{
-        "validate":"core_js.core_js.utils.leads.validate"
+        "validate":"core_js.core_js.utils.leads.validate",
+        
     },
     "Opportunity":{
         "validate":"core_js.core_js.utils.opportunity.validate"

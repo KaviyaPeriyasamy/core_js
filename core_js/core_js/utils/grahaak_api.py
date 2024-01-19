@@ -3,7 +3,7 @@ import json
 
 @frappe.whitelist()
 def get_retailers():
-	cust_list = frappe.get_list('Customer')
+	cust_list = frappe.get_list('Customer', {"disabled": 0})
 	data = []
 	for row in cust_list:
 		cust_doc = frappe.get_doc('Customer', row['name'])
@@ -77,7 +77,7 @@ def get_retailers():
 
 @frappe.whitelist()
 def get_distributors():
-	cust_list = frappe.get_list('Customer')
+	cust_list = frappe.get_list('Customer',{"disabled": 0})
 	data = []
 	for row in cust_list:
 		cust_doc = frappe.get_doc('Customer', row['name'])

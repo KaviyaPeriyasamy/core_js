@@ -1,5 +1,9 @@
 frappe.ui.form.on('Lead', {
+    
     refresh(frm) {
+        if(cur_frm.doc.__islocal==1&&cur_frm.doc.custom_make_read_only==1){
+            cur_frm.set_value("custom_make_read_only",0)
+        }
         if(cur_frm.doc.custom_make_read_only){
             setTimeout(()=>{
             frm.remove_custom_button("Customer","Create");

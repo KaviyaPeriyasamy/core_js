@@ -19,4 +19,7 @@ refresh(frm) {
                 frm.remove_custom_button("Next Follow-up");
         }
 	
-},})
+},
+
+
+})
