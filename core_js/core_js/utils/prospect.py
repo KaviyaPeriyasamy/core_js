@@ -11,7 +11,7 @@ def on_trash(self,action):
     for i in self.leads:
         frappe.set_value("Lead",i.lead, "status", "Interested")
         frappe.set_value("Lead", i.lead, "custom_make_read_only", 0)
-        
+
 
 
 def prospect_creation_script():
@@ -231,76 +231,6 @@ def prospect_creation_script():
             print(customer_doc.name)
             pass
 
-
-
-
-def customer_del():
-    a=frappe.get_all("Customer",{"lead_name":["is","set"],"opportunity_name":["is","not set"]},pluck="name")
-    for i in a:
-        sale_order=frappe.get_all("Sales Order",filters={"customer":i})
-        sale_invoice=frappe.get_all("Sales Invoice",filters={"customer":i})
-        sales_meet=frappe.get_all("sales_meet_confirmation",filters={"customer":i})
-        try:
-            if not sale_order and not sale_invoice and not sales_meet:
-                filters=[
-                    ["Dynamic Link", "link_doctype", "=", 'Customer'],
-                    ["Dynamic Link", "link_name", "=", i],
-                    ["Dynamic Link", "parenttype", "=", "Address"],
-                ]
-                filters1=[
-                        ["Dynamic Link", "link_doctype", "=", 'Customer'],
-                        ["Dynamic Link", "link_name", "=", i],
-                        ["Dynamic Link", "parenttype", "=", "Contact"],
-                    ]
-                address=frappe.get_all("Address",filters=filters,pluck="name")
-                contact=frappe.get_all("Contact",filters=filters1,pluck="name")
-                for k in address:
-                    address_doc=frappe.get_doc("Address",k)
-                    for row in address_doc.get("links"):
-                    
-                        if row.get("link_doctype") == "Customer":
-                            address_doc.get("links").remove(row)
-                            address_doc.save()
-                for u in contact:
-                    contact_doc=frappe.get_doc("Contact",u)
-                    for row in contact_doc.get("links"):
-                    
-                        if row.get("link_doctype") == "Customer":
-                            contact_doc.get("links").remove(row)
-                            contact_doc.save()
-                frappe.delete_doc("Customer",i)
-        except:
-            pass
-
-def opportunity():
-    a=frappe.get_all("Opportunity",{"opportunity_from":"Customer"},pluck="name")
-    for i in a:
-        opp=frappe.get_doc("Opportunity",i)
-        sale_order=frappe.get_all("Sales Order",filters={"customer":opp.party_name})
-        sale_invoice=frappe.get_all("Sales Invoice",filters={"customer":opp.party_name})
-        try:
-            if not sale_order and not sale_invoice:
-                if not frappe.db.exists("Prospect",opp.party_name):
-                    prospect = frappe.new_doc("Prospect")
-                    prospect.company_name=opp.party_name
-
-                    prospect.samples_sent="No"
-                    prospect.custom_status="New"
-                    prospect.territory=opp.territory
-                    prospect.industry=opp.industry
-
-                    
-                    prospect.flags.ignore_permissions = True
-                    prospect.flags.ignore_mandatory = True
-                    prospect.save()
-                    
-                    frappe.delete_doc("Opportunity",opp.name)
-        except:
-            print(opp.party_name)
-            pass
-
-
-            
 
 
 
